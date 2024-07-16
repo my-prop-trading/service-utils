@@ -81,7 +81,7 @@ impl<T: DedupItem> DedupCache<T> {
         }
     }
 
-    pub fn items_len(&self, item_name: &str) -> usize {
+    pub fn len_by_name(&self, item_name: &str) -> usize {
         if let Some(keys_cache) = self.keys_by_names.get(&item_name.into()) {
             keys_cache.keys.len()
         } else {

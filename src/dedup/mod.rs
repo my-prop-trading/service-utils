@@ -18,7 +18,7 @@ mod tests {
         dedup_cache.insert(&item);
 
         assert!(dedup_cache.contains(&item));
-        assert_eq!(dedup_cache.items_len(&item.get_name_str()), 1);
+        assert_eq!(dedup_cache.len_by_name(&item.get_name_str()), 1);
     }
 
     #[test]
@@ -51,7 +51,7 @@ mod tests {
         dedup_cache.insert(&item2);
         dedup_cache.insert(&item3);
 
-        assert_eq!(dedup_cache.items_len(&item1.get_name_str()), 2);
+        assert_eq!(dedup_cache.len_by_name(&item1.get_name_str()), 2);
         assert!(!dedup_cache.contains(&item1));
         assert!(dedup_cache.contains(&item2));
         assert!(dedup_cache.contains(&item3));
