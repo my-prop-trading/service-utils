@@ -1,3 +1,4 @@
+use crate::dedup::dedup_item::DedupItem;
 use crate::dedup::dedup_item_key::DedupItemKey;
 use crate::dedup::dedup_item_name::DedupItemName;
 use ahash::AHashSet;
@@ -18,10 +19,10 @@ struct DedupKeysCache {
 impl DedupKeysCache {
     pub fn new(item: &impl DedupItem, capacity: usize) -> Self {
         let mut keys = AHashSet::with_capacity(capacity);
-        keys.insert(item.get_key());
+        keys.insert(item.get_key_str().into());
 
         Self {
-            name: item.get_name(),
+            name: item.get_name_str().into(),
             keys,
         }
     }
@@ -36,7 +37,7 @@ pub struct DedupCache<TItem: DedupItem> {
 impl<T: DedupItem> DedupCache<T> {
     pub fn new() -> Self {
         let default_capacity: usize = 1000;
-        
+
         Self {
             capacity: NonZero::new(default_capacity).unwrap(),
             keys_by_names: SortedVec::new_with_capacity(2),
@@ -53,7 +54,7 @@ impl<T: DedupItem> DedupCache<T> {
     }
 
     pub fn insert(&mut self, item: &T) {
-        let name = item.get_name();
+        let name = item.get_name_str().into();
 
         if let Some(keys_cache) = self.keys_by_names.get_mut(&name) {
             if keys_cache.keys.len() >= self.capacity.get() {
@@ -65,7 +66,7 @@ impl<T: DedupItem> DedupCache<T> {
                     .clone();
                 keys_cache.keys.remove(&first_key);
             }
-            keys_cache.keys.insert(item.get_key());
+            keys_cache.keys.insert(item.get_key_str().into());
         } else {
             self.keys_by_names
                 .insert_or_replace(DedupKeysCache::new(item, self.capacity.get()));
@@ -73,23 +74,18 @@ impl<T: DedupItem> DedupCache<T> {
     }
 
     pub fn contains(&self, item: &T) -> bool {
-        if let Some(keys_cache) = self.keys_by_names.get(&item.get_name()) {
-            keys_cache.keys.contains(&item.get_key())
+        if let Some(keys_cache) = self.keys_by_names.get(&item.get_name_str().into()) {
+            keys_cache.keys.contains(&item.get_key_str().into())
         } else {
             false
         }
     }
 
-    pub fn items_len(&self, item_name: &DedupItemName) -> usize {
-        if let Some(keys_cache) = self.keys_by_names.get(item_name) {
+    pub fn items_len(&self, item_name: &str) -> usize {
+        if let Some(keys_cache) = self.keys_by_names.get(&item_name.into()) {
             keys_cache.keys.len()
         } else {
             0
         }
     }
-}
-
-pub trait DedupItem {
-    fn get_key(&self) -> DedupItemKey;
-    fn get_name(&self) -> DedupItemName;
 }

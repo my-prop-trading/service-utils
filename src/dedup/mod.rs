@@ -1,12 +1,12 @@
 pub mod dedup_cache;
+pub mod dedup_item;
 pub mod dedup_item_key;
 pub mod dedup_item_name;
 
 #[cfg(test)]
 mod tests {
-    use crate::dedup::dedup_cache::{DedupCache, DedupItem};
-    use crate::dedup::dedup_item_key::DedupItemKey;
-    use crate::dedup::dedup_item_name::DedupItemName;
+    use crate::dedup::dedup_cache::DedupCache;
+    use crate::dedup::dedup_item::DedupItem;
     use std::num::NonZero;
 
     #[test]
@@ -18,7 +18,7 @@ mod tests {
         dedup_cache.insert(&item);
 
         assert!(dedup_cache.contains(&item));
-        assert_eq!(dedup_cache.items_len(&item.get_name()), 1);
+        assert_eq!(dedup_cache.items_len(&item.get_name_str()), 1);
     }
 
     #[test]
@@ -51,7 +51,7 @@ mod tests {
         dedup_cache.insert(&item2);
         dedup_cache.insert(&item3);
 
-        assert_eq!(dedup_cache.items_len(&item1.get_name()), 2);
+        assert_eq!(dedup_cache.items_len(&item1.get_name_str()), 2);
         assert!(!dedup_cache.contains(&item1));
         assert!(dedup_cache.contains(&item2));
         assert!(dedup_cache.contains(&item3));
@@ -62,12 +62,12 @@ mod tests {
     }
 
     impl DedupItem for TestDedupItem {
-        fn get_key(&self) -> DedupItemKey {
-            self.id.clone().into()
+        fn get_key_str(&self) -> &str {
+            &self.id
         }
 
-        fn get_name(&self) -> DedupItemName {
-            "test-item".into()
+        fn get_name_str(&self) -> &str {
+            "test"
         }
     }
 }
