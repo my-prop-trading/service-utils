@@ -22,6 +22,19 @@ mod tests {
     }
 
     #[test]
+    fn dedup_same_insert() {
+        let mut dedup_cache = DedupCache::new();
+        let item = TestDedupItem {
+            id: "1".to_string(),
+        };
+        dedup_cache.insert(&item);
+        dedup_cache.insert(&item);
+
+        assert!(dedup_cache.contains(&item));
+        assert_eq!(dedup_cache.len_by_name(&item.get_name_str()), 1);
+    }
+
+    #[test]
     fn do_not_contains() {
         let mut dedup_cache = DedupCache::new();
         let item = TestDedupItem {

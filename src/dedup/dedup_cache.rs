@@ -72,6 +72,7 @@ impl<T: DedupItem> DedupCache<T> {
                     .clone();
                 keys_cache.keys.remove(&first_key);
             }
+            
             keys_cache.keys.insert(item.get_key_str().into());
         } else {
             self.keys_by_names
