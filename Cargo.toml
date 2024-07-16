@@ -1,0 +1,15 @@
+[package]
+name = "service-utils"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+# Defines a feature named `webp` that does not enable any other features.
+default = ["dedup"]
+dedup = []
+
+[dependencies]
+rust-extensions = { tag = "0.1.4", git = "https://github.com/MyJetTools/rust-extensions.git" }
+
+ahash = "*"
+compact_str = "*"
