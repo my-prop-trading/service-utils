@@ -34,6 +34,12 @@ pub struct DedupCache<TItem: DedupItem> {
     item: std::marker::PhantomData<TItem>,
 }
 
+impl<TItem: DedupItem> Default for DedupCache<TItem> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: DedupItem> DedupCache<T> {
     pub fn new() -> Self {
         let default_capacity: usize = 1000;

@@ -5,7 +5,7 @@ edition = "2021"
 
 [features]
 # Defines a feature named `webp` that does not enable any other features.
-default = ["dedup"]
+default = []
 dedup = []
 
 [dependencies]
